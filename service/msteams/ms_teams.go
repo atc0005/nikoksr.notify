@@ -9,6 +9,7 @@ import (
 	"github.com/atc0005/go-teams-notify/v2/adaptivecard"
 )
 
+//go:generate mockery --inpackage
 type teamsClient interface {
 	SendWithContext(ctx context.Context, webhookURL string, webhookMessage teams.TeamsMessage) error
 	SkipWebhookURLValidationOnSend(skip bool) *teams.TeamsClient

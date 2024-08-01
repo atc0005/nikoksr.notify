@@ -11,3 +11,4 @@ packages:
       all: true
       exclude:
         - "service/http"
+        - "vendor"
