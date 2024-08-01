@@ -6,15 +6,16 @@ import (
 	"fmt"
 
 	teams "github.com/atc0005/go-teams-notify/v2"
+	"github.com/atc0005/go-teams-notify/v2/adaptivecard"
 )
 
 type teamsClient interface {
-	SendWithContext(ctx context.Context, webhookURL string, webhookMessage teams.MessageCard) error
-	SkipWebhookURLValidationOnSend(skip bool) teams.API
+	SendWithContext(ctx context.Context, webhookURL string, webhookMessage teams.TeamsMessage) error
+	SkipWebhookURLValidationOnSend(skip bool) *teams.TeamsClient
 }
 
 // Compile-time check to ensure that teams.Client implements the teamsClient interface.
-var _ teamsClient = teams.NewClient()
+var _ teamsClient = teams.NewTeamsClient()
 
 // MSTeams struct holds necessary data to communicate with the MSTeams API.
 type MSTeams struct {
@@ -27,7 +28,7 @@ type MSTeams struct {
 //
 //	-> https://github.com/atc0005/go-teams-notify#example-basic
 func New() *MSTeams {
-	client := teams.NewClient()
+	client := teams.NewTeamsClient()
 
 	m := &MSTeams{
 		client:   client,
@@ -58,9 +59,10 @@ func (m *MSTeams) AddReceivers(webHooks ...string) {
 //
 //	-> https://github.com/atc0005/go-teams-notify#example-basic
 func (m MSTeams) Send(ctx context.Context, subject, message string) error {
-	msgCard := teams.NewMessageCard()
-	msgCard.Title = subject
-	msgCard.Text = message
+	msgCard, err := adaptivecard.NewSimpleMessage(message, subject, true)
+	if err != nil {
+		return fmt.Errorf("generate new message: %w", err)
+	}
 
 	for _, webHook := range m.webHooks {
 		select {
