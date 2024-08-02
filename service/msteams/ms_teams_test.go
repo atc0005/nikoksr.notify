@@ -26,7 +26,7 @@ func TestMSTeams_Send(t *testing.T) {
 			subject:  "Test Subject",
 			message:  "Test Message",
 			mockSetup: func(m *mockteamsClient) {
-				m.On("SendWithContext", mock.Anything, "https://webhook1.example.com", mock.AnythingOfType("MessageCard")).
+				m.On("SendWithContext", mock.Anything, "https://webhook1.example.com", mock.AnythingOfType("*adaptivecard.Message")).
 					Return(nil)
 			},
 			expectedError: "",
@@ -37,9 +37,10 @@ func TestMSTeams_Send(t *testing.T) {
 			subject:  "Test Subject",
 			message:  "Test Message",
 			mockSetup: func(m *mockteamsClient) {
-				m.On("SendWithContext", mock.Anything, "https://webhook1.example.com", mock.AnythingOfType("MessageCard")).
+				// need to have this pass in a adaptivecard.Message.
+				m.On("SendWithContext", mock.Anything, "https://webhook1.example.com", mock.AnythingOfType("*adaptivecard.Message")).
 					Return(nil)
-				m.On("SendWithContext", mock.Anything, "https://webhook2.example.com", mock.AnythingOfType("MessageCard")).
+				m.On("SendWithContext", mock.Anything, "https://webhook2.example.com", mock.AnythingOfType("*adaptivecard.Message")).
 					Return(nil)
 			},
 			expectedError: "",
@@ -50,7 +51,7 @@ func TestMSTeams_Send(t *testing.T) {
 			subject:  "Test Subject",
 			message:  "Test Message",
 			mockSetup: func(m *mockteamsClient) {
-				m.On("SendWithContext", mock.Anything, "https://webhook1.example.com", mock.AnythingOfType("MessageCard")).
+				m.On("SendWithContext", mock.Anything, "https://webhook1.example.com", mock.AnythingOfType("*adaptivecard.Message")).
 					Return(errors.New("Teams error"))
 			},
 			expectedError: "send messag to channel \"https://webhook1.example.com\": Teams error",

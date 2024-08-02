@@ -65,6 +65,12 @@ func (m MSTeams) Send(ctx context.Context, subject, message string) error {
 		return fmt.Errorf("generate new message: %w", err)
 	}
 
+	// NOTE: Added as part of troubleshooting, but retained for illustration
+	// since this corresponds to the
+	// `mock.AnythingOfType("*adaptivecard.Message")` calls in the
+	// `ms_teams_test.go` file.
+	var _ teams.TeamsMessage = msgCard
+
 	for _, webHook := range m.webHooks {
 		select {
 		case <-ctx.Done():
